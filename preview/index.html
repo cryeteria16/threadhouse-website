@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en" data-look="noir">
+<head>
+<base target="_top">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thread House · Website preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=Amiri:wght@400;700&family=Playball&display=swap" rel="stylesheet">
+<style>
+/* ---------- The four looks, taken from the shop signage ---------- */
+html {
+  --wmFont: 'Cormorant Garamond', serif; --wmCase: uppercase; --wmTrack: .14em; --wmWeight: 600; --wmScale: 1; --wmColor: inherit;
+}
+html[data-look="noir"] {
+  --scheme: dark; --bg: #15130F; --surface: #201D17; --ink: #F3E9D2; --muted: #BFB197;
+  --eyebrow: #D9B45A; --eyebrowDeep: #D9B45A; --deep: #000000; --onDeep: #F3E9D2; --onDeepMuted: #BFB197;
+  --btn: #D4AF5A; --btnInk: #14110C; --line: #3A3224; --ph1: #201D17; --ph2: #2A251C; --ph3: #4A3E28; --fig: #7A6640;
+  --wmFont: 'Playball', cursive; --wmCase: none; --wmTrack: 0; --wmWeight: 400; --wmScale: 1.3; --wmColor: #D9B45A;
+}
+html[data-look="rose"] {
+  --scheme: light; --bg: #FBF5EC; --surface: #F7DCE5; --ink: #3A0F1E; --muted: #6E4A52;
+  --eyebrow: #A0174F; --eyebrowDeep: #EBC9D2; --deep: #6E1230; --onDeep: #FBF5EC; --onDeepMuted: #EBC9D2;
+  --btn: #B0185E; --btnInk: #FFFFFF; --line: #E8D5C3; --ph1: #F1DFD3; --ph2: #E3B9C4; --ph3: #C46A8C; --fig: #8E2A4E;
+}
+html[data-look="purple"] {
+  --scheme: dark; --bg: #2A0F3D; --surface: #3A1752; --ink: #F7ECD6; --muted: #CDB8DA;
+  --eyebrow: #E5BC5C; --eyebrowDeep: #E5BC5C; --deep: #1A0727; --onDeep: #F7ECD6; --onDeepMuted: #CDB8DA;
+  --btn: #E0B24F; --btnInk: #2A0F3D; --line: #4F2B69; --ph1: #3A1752; --ph2: #4A2068; --ph3: #6A3A8A; --fig: #8A5AAE;
+}
+html[data-look="wood"] {
+  --scheme: light; --bg: #F8EEDD; --surface: #DCEAD8; --ink: #14235E; --muted: #4A4A63;
+  --eyebrow: #17692B; --eyebrowDeep: #CAD5F5; --deep: #1D3A9A; --onDeep: #FFFFFF; --onDeepMuted: #CAD5F5;
+  --btn: #C8202A; --btnInk: #FFFFFF; --line: #DFC59C; --ph1: #F1E0C3; --ph2: #E3C796; --ph3: #B98F55; --fig: #8A6838;
+}
+
+/* ---------- Page basics (from the mockups) ---------- */
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+a:hover { opacity: .8; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: 48px; padding-right: 48px; box-sizing: border-box; }
+.menu { display: none !important; }
+@media (max-width: 900px) {
+  .wrap { padding-left: 16px; padding-right: 16px; }
+  .navl, .hide-sm, .thumbs { display: none !important; }
+  .menu { display: inline-flex !important; }
+  .stack { grid-template-columns: minmax(0, 1fr) !important; }
+  .h1 { font-size: 50px !important; }
+  .h2 { font-size: 38px !important; }
+}
+@media (max-width: 600px) {
+  .page header .wrap { gap: 8px !important; padding-left: 8px; padding-right: 8px; }
+  .page header a[aria-label="Threadhouse home"] > span:first-child { font-size: calc(19px * var(--wmScale)) !important; }
+  .page header a[aria-label="Threadhouse home"] > span:last-child { font-size: 7.5px !important; letter-spacing: .16em !important; padding: 3px 8px !important; }
+  .h1 { font-size: 44px !important; }
+}
+.pages { overflow-x: clip; }
+
+/* ---------- Smooth colour morph (fallback when circle reveal is unavailable) ---------- */
+.pages, .pages * {
+  transition: background-color .9s cubic-bezier(.4, 0, .2, 1), color .9s cubic-bezier(.4, 0, .2, 1),
+              border-color .9s cubic-bezier(.4, 0, .2, 1), fill .9s ease, stroke .9s ease;
+}
+html.instant .pages, html.instant .pages * { transition: none !important; }
+
+/* ---------- Pages ---------- */
+.page { display: none; }
+.page.on { display: block; animation: pageIn .7s cubic-bezier(.2, .7, .2, 1) both; }
+html.pagevt .page.on { animation: none; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* Circle reveal for looks, soft rise for pages */
+::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; }
+html.lookvt::view-transition-old(root), html.lookvt::view-transition-new(root) { animation: none; }
+html.lookvt::view-transition-old(root) { z-index: 1; }
+html.lookvt::view-transition-new(root) { z-index: 2; }
+html.pagevt::view-transition-old(root) { animation: vtOut .35s ease both; }
+html.pagevt::view-transition-new(root) { animation: vtIn .6s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes vtOut { to { opacity: 0; transform: scale(.985); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(20px); } }
+
+/* Brand board: scaled to fit any screen */
+.brand-stage { background: #EFE8DD; padding: 40px 0 150px; overflow: hidden; }
+.brand-fit { margin: 0 auto; position: relative; }
+.brand-scale { width: 1440px; transform-origin: top left; position: absolute; left: 0; top: 0; box-shadow: 0 30px 80px rgba(40, 20, 10, .12); }
+
+/* Mobile page in a phone frame */
+.phone-stage { display: flex; justify-content: center; padding: 48px 16px 170px; background: var(--surface); min-height: 100vh; box-sizing: border-box; }
+.phone { position: relative; width: 390px; padding: 14px; border-radius: 58px; background: #0E0B10; box-shadow: 0 40px 90px rgba(0, 0, 0, .35), inset 0 0 0 2px #2B2630; }
+.phone::before { content: ""; position: absolute; top: 24px; left: 50%; width: 110px; height: 30px; margin-left: -55px; border-radius: 20px; background: #0E0B10; z-index: 3; }
+.phone-screen { width: 390px; height: 820px; overflow-y: auto; border-radius: 44px; background: var(--bg); scrollbar-width: none; }
+.phone-screen::-webkit-scrollbar { display: none; }
+.phone-screen > div { padding-top: 36px; box-sizing: border-box; }
+.phone-caption { position: absolute; left: 0; right: 0; bottom: -44px; text-align: center; font: 400 13px/1.4 'Jost', sans-serif; color: var(--muted); letter-spacing: .06em; }
+@media (max-width: 520px) {
+  .phone-stage { padding: 0 0 150px; }
+  .phone { width: 100%; padding: 0; border-radius: 0; background: none; box-shadow: none; }
+  .phone::before, .phone-caption { display: none; }
+  .phone-screen { width: 100%; height: auto; overflow: visible; border-radius: 0; }
+  .phone-screen > div { width: 100% !important; padding-top: 0; }
+}
+
+/* ---------- Floating control dock ---------- */
+.dock {
+  position: fixed; left: 50%; bottom: 22px; z-index: 50; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; padding: 8px; max-width: calc(100vw - 24px); box-sizing: border-box;
+  border-radius: 999px; background: rgba(20, 14, 24, .80); color: #FFFFFF;
+  backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .30), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  font-family: 'Jost', system-ui, sans-serif;
+  animation: dockIn .9s cubic-bezier(.2, .9, .2, 1.1) .2s both;
+}
+@keyframes dockIn { from { opacity: 0; transform: translate(-50%, 30px); } }
+.tabs { position: relative; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  position: relative; z-index: 1; height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent;
+  color: rgba(255, 255, 255, .74); font: 500 12.5px/1 'Jost', sans-serif; letter-spacing: .08em; white-space: nowrap; cursor: pointer;
+  transition: color .35s ease;
+}
+.tab:hover { color: #FFFFFF; }
+.tab[aria-selected="true"] { color: #17121B; }
+.tab-pill {
+  position: absolute; left: 0; top: 0; height: 44px; width: 0; border-radius: 999px; background: #FFFFFF;
+  transition: transform .55s cubic-bezier(.3, 1.25, .45, 1), width .55s cubic-bezier(.3, 1.25, .45, 1);
+}
+.sep { width: 1px; height: 26px; background: rgba(255, 255, 255, .18); flex: none; }
+.looks { display: flex; align-items: center; gap: 6px; flex: none; }
+.look {
+  width: 44px; height: 44px; padding: 4px; border-radius: 999px; border: 2px solid transparent; background: transparent; cursor: pointer;
+  transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), border-color .35s ease;
+}
+.look:hover { transform: scale(1.1); }
+.look[aria-pressed="true"] { border-color: #FFFFFF; }
+.look span { display: block; width: 100%; height: 100%; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.look[data-look="rose"] span { background: conic-gradient(from 210deg, #6E1230 0 33%, #B0185E 0 66%, #FBF5EC 0); }
+.look[data-look="purple"] span { background: conic-gradient(from 210deg, #2A0F3D 0 33%, #E0B24F 0 66%, #D12A8C 0); }
+.look[data-look="noir"] span { background: conic-gradient(from 210deg, #15130F 0 40%, #D4AF5A 0 80%, #F3E9D2 0); }
+.look[data-look="wood"] span { background: conic-gradient(from 210deg, #1D3A9A 0 25%, #C8202A 0 50%, #17692B 0 75%, #F2DDB8 0); }
+.look-name { position: relative; min-width: 150px; height: 20px; overflow: hidden; padding-right: 10px; font: 500 12.5px/20px 'Jost', sans-serif; letter-spacing: .06em; }
+.look-name span { position: absolute; left: 0; top: 0; white-space: nowrap; transition: transform .5s cubic-bezier(.2, .8, .2, 1), opacity .5s ease; }
+.look-name span.out { transform: translateY(-110%); opacity: 0; }
+.look-name span.in { transform: translateY(110%); opacity: 0; }
+.look:focus-visible, .tab:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 96px; z-index: 49; transform: translate(-50%, 10px); opacity: 0; pointer-events: none;
+  padding: 10px 18px; border-radius: 999px; background: rgba(20, 14, 24, .80); color: #FFFFFF; font: 400 13px/1.3 'Jost', sans-serif;
+  letter-spacing: .03em; white-space: nowrap; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  transition: opacity .6s ease, transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 700px) {
+  .dock { bottom: 10px; flex-wrap: wrap; justify-content: center; border-radius: 26px; width: calc(100vw - 20px); gap: 6px; }
+  .tabs { width: 100%; }
+  .sep { display: none; }
+  .look-name { min-width: 150px; }
+  .toast { bottom: 140px; white-space: normal; text-align: center; width: max-content; max-width: calc(100vw - 40px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pages, .pages *, .tab-pill, .look, .look-name span, .toast, .dock, .page.on { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<main id="app" class="pages">
+  <section class="page" data-page="home" aria-label="Home page"><div style="background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif;">
+
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px;">Now open in Sharjah <span style="color: var(--onDeepMuted);">·</span> Trade prices for tailors &amp; boutiques <span style="color: var(--onDeepMuted);">·</span> <a href="#" style="text-decoration: underline; text-underline-offset: 3px;">Order on WhatsApp</a></div>
+
+  <header style="border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 22px; padding-bottom: 22px;">
+      <div style="display: flex; align-items: center; gap: 26px;">
+        <button class="menu" aria-label="Open menu" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+        <nav class="navl" aria-label="Main" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;">
+          <a href="#" data-go="shop">Laces</a>
+          <a href="#">Threads</a>
+          <a href="#">Fastenings</a>
+          <a href="#">Tools</a>
+          <a href="#" data-go="tailoring">Tailoring</a>
+        </nav>
+      </div>
+      <a href="#" aria-label="Threadhouse home" style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+        <span style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(30px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</span>
+        <span style="background: var(--btn); color: var(--btnInk); font-size: 9px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; padding: 4px 12px 4px 14px; border-radius: 999px; margin-top: 5px;">Trading &amp; Tailoring</span>
+      </a>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <a class="hide-sm" href="#" style="font-size: 12px; letter-spacing: .12em; margin-right: 10px;">EN <span style="color: var(--muted);">|</span> <span style="font-family: 'Amiri', serif; font-size: 14px; letter-spacing: 0;">العربية</span></a>
+        <button aria-label="Search" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg></button>
+        <button class="hide-sm" aria-label="Account" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+        <button aria-label="Shopping bag, 0 items" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 8h14l-1 13H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="wrap" style="padding-top: 72px; padding-bottom: 96px;">
+    <div class="stack" style="display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">Haberdashery &amp; tailoring · Sharjah</div>
+        <h1 class="h1" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 88px; line-height: .98; letter-spacing: -.01em;">Everything a garment <i>needs.</i></h1>
+        <p style="margin: 0; max-width: 450px; font-size: 17px; line-height: 1.7; font-weight: 300; color: var(--muted);">Laces and trims cut by the metre, threads in every shade, zips, buttons and linings, the tools of the trade, and a tailoring studio to finish the job.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; padding-top: 8px;">
+          <a href="#" data-go="shop" style="display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 30px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Shop supplies <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          <a href="#" data-go="tailoring" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Book a tailor</a>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: end;">
+        <div style="aspect-ratio: 3 / 4.2; border-radius: 999px 999px 3px 3px; overflow: hidden; background: var(--surface);">
+          <img src="../images/th-02.webp" alt="Rolls of lace in orange, lilac, magenta and peach" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div style="aspect-ratio: 3 / 4; border-radius: 999px 999px 3px 3px; overflow: hidden; background: var(--surface);">
+            <img src="../images/th-05.webp" alt="Aqua guipure lace border" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </div>
+          <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; line-height: 1.35; color: var(--muted);">Hundreds of laces, cut to the length you need.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface);">
+    <div class="wrap" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0;">
+      
+        <div style="padding: 32px 28px; display: flex; gap: 16px; align-items: center; border-left: 1px solid var(--line);">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--eyebrow);">01</span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 15px;">Cut by the metre</span>
+            <span style="font-size: 13px; font-weight: 300; color: var(--muted);">Laces, cords and elastics, any length</span>
+          </div>
+        </div>
+      
+        <div style="padding: 32px 28px; display: flex; gap: 16px; align-items: center; border-left: 1px solid var(--line);">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--eyebrow);">02</span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 15px;">Trade pricing</span>
+            <span style="font-size: 13px; font-weight: 300; color: var(--muted);">Roll and box rates for tailors</span>
+          </div>
+        </div>
+      
+        <div style="padding: 32px 28px; display: flex; gap: 16px; align-items: center; border-left: 1px solid var(--line);">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--eyebrow);">03</span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 15px;">Tailoring studio</span>
+            <span style="font-size: 13px; font-weight: 300; color: var(--muted);">Stitching and alterations in-house</span>
+          </div>
+        </div>
+      
+        <div style="padding: 32px 28px; display: flex; gap: 16px; align-items: center; border-left: 1px solid var(--line);">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--eyebrow);">04</span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 15px;">UAE delivery</span>
+            <span style="font-size: 13px; font-weight: 300; color: var(--muted);">Or collect from the Sharjah counter</span>
+          </div>
+        </div>
+      
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 104px; padding-bottom: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 44px;">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">Shop by department</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 54px; line-height: 1;">From the first stitch <i>to the last button.</i></h2>
+      </div>
+      <a href="#" data-go="shop" style="font-size: 12px; letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid var(--ink); padding-bottom: 4px;">Browse everything</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-04.webp" alt="Lace in many colours" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Laces &amp; trims</span>
+            <span style="font-size: 12px; color: var(--muted);">By the metre</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-08.webp" alt="Thread spools" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Threads</span>
+            <span style="font-size: 12px; color: var(--muted);">Sewing · overlock · denim</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-35.webp" alt="YKK zips in many colours" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Zips</span>
+            <span style="font-size: 12px; color: var(--muted);">YKK · concealed · openable</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-37.webp" alt="Pant buttons" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Buttons &amp; fasteners</span>
+            <span style="font-size: 12px; color: var(--muted);">Press studs · hooks</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-10.webp" alt="Lining materials" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Linings &amp; interfacing</span>
+            <span style="font-size: 12px; color: var(--muted);">Crepe · silk · canvas</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-16.webp" alt="Tailoring scissors in box" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Tailoring tools</span>
+            <span style="font-size: 12px; color: var(--muted);">Shears · tapes · rippers</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-21.webp" alt="Bobbin cases" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Machine parts</span>
+            <span style="font-size: 12px; color: var(--muted);">Bobbins · belts</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="shop" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line); overflow: hidden;">
+            <img src="../images/th-20.webp" alt="Tag gun" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 25px;">Tagging</span>
+            <span style="font-size: 12px; color: var(--muted);">Tag guns · pins</span>
+          </div>
+        </a>
+      
+    </div>
+  </section>
+
+  <section style="background: var(--deep); color: var(--onDeep); margin-top: 96px;">
+    <div class="wrap stack" style="display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 72px; align-items: center; padding-top: 104px; padding-bottom: 104px;">
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: 220px 220px; gap: 14px;">
+        <img src="../images/th-01.webp" alt="Ivory guipure lace in two widths" style="grid-column: 1 / 3; grid-row: 1; width: 100%; height: 100%; object-fit: cover; display: block;">
+        <img src="../images/th-07.webp" alt="Orange and gold cord lace in packs" style="grid-column: 3; grid-row: 1 / 3; width: 100%; height: 100%; object-fit: cover; display: block;">
+        <img src="../images/th-06.webp" alt="White scalloped lace" style="grid-column: 1; grid-row: 2; width: 100%; height: 100%; object-fit: cover; display: block;">
+        <img src="../images/th-04.webp" alt="Packs of lace in mustard, orange, lilac, olive and pink" style="grid-column: 2; grid-row: 2; width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 26px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--onDeepMuted);">The lace room</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 64px; line-height: 1;">Guipure, cutwork and cord, <i>in every colour.</i></h2>
+        <p style="margin: 0; max-width: 460px; font-size: 16px; line-height: 1.75; font-weight: 300; color: var(--onDeepMuted);">Edge an abaya sleeve, finish a dupatta or trim a bridal blouse. Bring a swatch of your fabric and we will match it from the wall, then cut exactly what you need.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+          <a href="#" data-go="shop" style="display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 30px; border: 1px solid var(--onDeep); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Shop laces <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 104px; padding-bottom: 104px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 44px;">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">On every tailor’s table</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 54px; line-height: 1;">Workroom essentials</h2>
+      </div>
+      <a href="#" data-go="shop" style="font-size: 12px; letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid var(--ink); padding-bottom: 4px;">Shop all essentials</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); column-gap: 24px; row-gap: 44px;">
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-35.webp" alt="YKK Nylon Zip" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add YKK Nylon Zip to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Zips</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">YKK Nylon Zip</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">from AED 4</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-30.webp" alt="Overlock Thread Cone" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Overlock Thread Cone to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Threads</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Overlock Thread Cone</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">AED 12</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-16.webp" alt="Tailoring Scissors, 12&quot;" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Tailoring Scissors, 12&quot; to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Tools</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Tailoring Scissors, 12"</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">AED 65</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-15.webp" alt="Cover Buttons, M &amp; L" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Cover Buttons, M &amp; L to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Buttons</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Cover Buttons, M &amp; L</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">AED 8 / dozen</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-09.webp" alt="Dori Piping Cord" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Dori Piping Cord to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Trims</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Dori Piping Cord</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">AED 3 / metre</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-32.webp" alt="Velcro, 4 widths" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Velcro, 4 widths to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Fastenings</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Velcro, 4 widths</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">from AED 5 / metre</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-13.webp" alt="Knitted Elastic" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Knitted Elastic to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Haberdashery</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Knitted Elastic</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">from AED 2 / metre</span>
+          </div>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-31.webp" alt="Dress Hook &amp; Eye" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            <button aria-label="Add Dress Hook &amp; Eye to bag" style="position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--eyebrow);">Fastenings</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Dress Hook &amp; Eye</span>
+            <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;">AED 6 / pack</span>
+          </div>
+        </a>
+      
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+    <div class="wrap stack" style="display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: center; padding-top: 104px; padding-bottom: 104px;">
+      <div style="aspect-ratio: 4 / 5; border-radius: 999px 999px 3px 3px; overflow: hidden;">
+        <img src="../images/th-14.webp" alt="A tailor's measuring tape" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">The tailoring studio</div>
+          <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 58px; line-height: 1;">Bought the lace? <i>We’ll stitch it on.</i></h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line);" class="stack">
+          
+            <div style="padding: 26px 24px 26px 0; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line);">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">01</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">Stitching</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Abayas, kurtas, suits and blouses cut and sewn to your measurements.</p>
+            </div>
+          
+            <div style="padding: 26px 24px 26px 0; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line);">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">02</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">Alterations</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Hems, fitting, sleeves and zip replacements, often while you browse.</p>
+            </div>
+          
+            <div style="padding: 26px 24px 26px 0; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line);">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">03</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">Lace finishing</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Laces and trims from our wall attached to sleeves, hems and dupattas.</p>
+            </div>
+          
+            <div style="padding: 26px 24px 26px 0; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line);">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">04</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">Machine help</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">The right bobbin case, belt or needle for your machine. [Confirm if servicing is offered.]</p>
+            </div>
+          
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+          <a href="#" data-go="tailoring" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">See services &amp; book</a>
+          <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 30px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg>Ask on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 96px; padding-bottom: 96px;">
+    <div class="stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; border: 1px solid var(--ink);">
+      <div style="padding: 56px; display: flex; flex-direction: column; gap: 20px; justify-content: center;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">For tailors, ateliers &amp; boutiques</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 50px; line-height: 1.02;">Open a trade account.</h2>
+        <p style="margin: 0; font-size: 15.5px; line-height: 1.75; font-weight: 300; color: var(--muted);">Roll and box pricing, stock held for regular orders, and a direct WhatsApp line to the counter. [Confirm trade terms with client.]</p>
+        <a href="#" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Apply for trade pricing</a>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line);">
+        <img src="../images/th-30.webp" alt="Overlock thread cone" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #FFFFFF;">
+        <img src="../images/th-20.webp" alt="Tagging gun" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #FFFFFF;">
+        <img src="../images/th-09.webp" alt="Dori piping cord reels" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #FFFFFF;">
+        <img src="../images/th-21.webp" alt="Sewing machine bobbin cases" style="width: 100%; aspect-ratio: 1 / 1; object-fit: contain; display: block; background: #FFFFFF;">
+      </div>
+    </div>
+  </section>
+
+  <section id="visit" style="background: var(--surface); border-top: 1px solid var(--line);">
+    <div class="wrap stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; padding-top: 96px; padding-bottom: 96px;">
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">Visit the shop</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 54px; line-height: 1;">Bring your fabric. <i>We’ll find the match.</i></h2>
+        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 15px; line-height: 1.6;">
+          <div style="display: flex; gap: 14px; align-items: flex-start;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"></path><circle cx="12" cy="10" r="2"></circle></svg><span>[Shop number, building, street]<br><span style="color: var(--muted);">[Area], Sharjah, United Arab Emirates</span></span></div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px;"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span>[Opening days and hours]</span></div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; padding-top: 6px;">
+          <a href="#" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Get directions</a>
+          <a href="#" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 30px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg>WhatsApp us</a>
+        </div>
+      </div>
+      <div style="position: relative; aspect-ratio: 4 / 3; background: var(--ph1); border: 1px solid var(--line); overflow: hidden;">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%;" aria-hidden="true"><g fill="none" stroke-width="2" style="stroke: var(--line);"><path d="M0 80L400 120M0 210L400 170M90 0L130 300M260 0L240 300M0 30L180 300"></path></g><g fill="none" stroke-width="6" style="stroke: var(--ph2);"><path d="M0 150C120 140 260 160 400 140"></path></g></svg>
+        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 6px;">
+          <span style="background: var(--btn); color: var(--btnInk); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; padding: 8px 12px;">Threadhouse</span>
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" style="fill: var(--btn);"><path d="M12 22s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"></path></svg>
+        </div>
+        <span style="position: absolute; right: 14px; bottom: 14px; background: var(--bg); color: var(--muted); font-size: 11px; padding: 6px 10px; border-radius: 999px;">[Embedded map]</span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background: var(--deep); color: var(--onDeep);">
+    <div class="wrap" style="padding-top: 80px; padding-bottom: 40px; display: flex; flex-direction: column; gap: 56px;">
+      <div class="stack" style="display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(30px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</div>
+          <p style="margin: 0; max-width: 360px; font-size: 14px; line-height: 1.7; font-weight: 300; color: var(--onDeepMuted);">New laces as they land, restocks of the essentials, and the occasional sewing tip from the studio.</p>
+          <form style="display: flex; max-width: 420px; border-bottom: 1px solid var(--onDeepMuted);">
+            <label for="nl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Email address</label>
+            <input id="nl" type="email" placeholder="Your email address" style="flex-grow: 1; min-width: 0; background: transparent; border: 0; color: var(--onDeep); font: inherit; font-size: 14px; padding: 14px 0; outline: none;">
+            <button type="button" style="background: none; border: 0; color: var(--onDeep); font: inherit; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; min-height: 44px; cursor: pointer;">Subscribe</button>
+          </form>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;"><span style="font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--onDeepMuted); margin-bottom: 6px;">Shop</span><a href="#" data-go="shop">Laces &amp; trims</a><a href="#">Threads</a><a href="#">Zips &amp; fastenings</a><a href="#">Buttons</a><a href="#">Linings &amp; interfacing</a><a href="#">Tools &amp; machine parts</a></div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;"><span style="font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--onDeepMuted); margin-bottom: 6px;">Studio</span><a href="#" data-go="tailoring">Stitching</a><a href="#" data-go="tailoring">Alterations</a><a href="#" data-go="tailoring">Lace finishing</a><a href="#">Trade accounts</a></div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;"><span style="font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--onDeepMuted); margin-bottom: 6px;">Help</span><a href="#">Delivery &amp; returns</a><a href="#">Cutting &amp; minimums</a><a href="#">Contact</a><a href="#">Instagram</a></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid var(--onDeepMuted); padding-top: 24px; font-size: 12px; color: var(--onDeepMuted); letter-spacing: .06em;">
+        <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE</span>
+        <span>Prices in AED, incl. VAT</span>
+      </div>
+    </div>
+  </footer>
+</div></section>
+  <section class="page" data-page="shop" aria-label="Shop: laces and trims"><div style="background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif;">
+
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px;">Every lace cut to the length you order · Minimum [n] metre</div>
+
+  <header style="border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 22px; padding-bottom: 22px;">
+      <div style="display: flex; align-items: center; gap: 26px;">
+        <button class="menu" aria-label="Open menu" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+        <nav class="navl" aria-label="Main" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;">
+          <a href="#" aria-current="page" style="border-bottom: 1px solid var(--ink); padding-bottom: 3px;">Laces</a>
+          <a href="#">Threads</a>
+          <a href="#">Fastenings</a>
+          <a href="#">Tools</a>
+          <a href="#" data-go="tailoring">Tailoring</a>
+        </nav>
+      </div>
+      <a href="#" data-go="home" aria-label="Threadhouse home" style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+        <span style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(30px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</span>
+        <span style="background: var(--btn); color: var(--btnInk); font-size: 9px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; padding: 4px 12px 4px 14px; border-radius: 999px; margin-top: 5px;">Trading &amp; Tailoring</span>
+      </a>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <a class="hide-sm" href="#" style="font-size: 12px; letter-spacing: .12em; margin-right: 10px;">EN <span style="color: var(--muted);">|</span> <span style="font-family: 'Amiri', serif; font-size: 14px; letter-spacing: 0;">العربية</span></a>
+        <button aria-label="Search" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg></button>
+        <button class="hide-sm" aria-label="Account" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+        <button aria-label="Shopping bag, 0 items" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 8h14l-1 13H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <section style="background: var(--deep); color: var(--onDeep);">
+    <div class="wrap stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: 56px; padding-bottom: 56px;">
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <nav aria-label="Breadcrumb" style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--onDeepMuted);"><a href="#" data-go="home">Home</a> <span aria-hidden="true">/</span> <span>Laces &amp; trims</span></nav>
+        <div style="display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap;">
+          <h1 class="h1" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 88px; line-height: .95;">Laces &amp; trims</h1>
+          <span style="font-family: 'Amiri', serif; font-size: 32px; color: var(--onDeepMuted);">دانتيل</span>
+        </div>
+        <p style="margin: 0; max-width: 480px; font-size: 16px; line-height: 1.75; font-weight: 300; color: var(--onDeepMuted);">Guipure borders, scalloped cutwork, cord laces and piping, cut by the metre or sold by the roll. Not sure of the shade? Send a photo of your fabric on WhatsApp and we will match it.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; height: 300px;">
+        <img src="../images/th-03.webp" alt="Rack of narrow lace trims in many colours" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+        <img src="../images/th-02.webp" alt="Lace rolls in orange, lilac and magenta" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+        <img src="../images/th-07.webp" alt="Orange and gold cord lace" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+      </div>
+    </div>
+  </section>
+
+  <div style="border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="display: flex; gap: 10px; flex-wrap: wrap; padding-top: 20px; padding-bottom: 20px;">
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--btn); background: var(--btn); color: var(--btnInk); font-size: 13px; letter-spacing: .06em;">All laces &amp; trims</a>
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; letter-spacing: .06em;">Guipure borders</a>
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; letter-spacing: .06em;">Scalloped cutwork</a>
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; letter-spacing: .06em;">Cord lace</a>
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; letter-spacing: .06em;">Narrow trims</a>
+      
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 13px; letter-spacing: .06em;">Piping &amp; dori</a>
+      
+    </div>
+  </div>
+
+  <section class="wrap" style="display: flex; flex-wrap: wrap; gap: 48px; padding-top: 48px; padding-bottom: 96px;">
+    <aside aria-label="Filters" style="flex: 1 1 240px; max-width: 280px; display: flex; flex-direction: column; gap: 34px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase;">Refine</span>
+        <a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px;">Clear all</a>
+      </div>
+      <fieldset style="border: 0; padding: 0; margin: 0; border-top: 1px solid var(--line); padding-top: 20px;">
+        <legend style="font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; margin-bottom: 14px;">Colour</legend>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+          
+            <button aria-label="Ivory" title="Ivory" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #EDE3CF; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="White" title="White" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Aqua" title="Aqua" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--ink); background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #7FB9C7; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Lilac" title="Lilac" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #A58BD6; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Magenta" title="Magenta" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #C2287F; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Peach" title="Peach" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #E8A08C; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Orange" title="Orange" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #EE6A1F; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Mustard" title="Mustard" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #C99A2E; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Olive" title="Olive" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #8DA048; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+            <button aria-label="Black" title="Black" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #141414; border: 1px solid rgba(0,0,0,.15);"></span></button>
+          
+        </div>
+      </fieldset>
+      <fieldset style="border: 0; padding: 0; margin: 0; border-top: 1px solid var(--line); padding-top: 20px;">
+        <legend style="font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; margin-bottom: 14px;">Width</legend>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+          
+            <button style="min-height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer;">½"</button>
+          
+            <button style="min-height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer;">1"</button>
+          
+            <button style="min-height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer;">2"</button>
+          
+            <button style="min-height: 44px; border: 1px solid var(--btn); background: var(--btn); color: var(--btnInk); font: inherit; font-size: 13px; cursor: pointer;">3"</button>
+          
+            <button style="min-height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer;">4"</button>
+          
+            <button style="min-height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer;">5"+</button>
+          
+        </div>
+      </fieldset>
+      <fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 20px;">
+        <legend style="font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; margin-bottom: 14px;">Sold by</legend>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" checked="" style="width: 18px; height: 18px; accent-color: var(--btn);"> The metre</label>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--btn);"> Full roll (trade)</label>
+      </fieldset>
+      <fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 20px;">
+        <legend style="font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; margin-bottom: 14px;">Use it on</legend>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--btn);"> Abaya sleeves &amp; hems</label>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--btn);"> Dupattas &amp; shawls</label>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--btn);"> Kurta necklines</label>
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; min-height: 32px;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--btn);"> Bridal &amp; formal</label>
+      </fieldset>
+    </aside>
+
+    <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 32px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <span style="font-size: 14px; color: var(--muted);">Showing 8 of [n] laces &amp; trims</span>
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .08em;">Sort
+          <select style="min-height: 44px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 14px;">
+            <option>New arrivals</option><option>Price per metre, low to high</option><option>Widest first</option>
+          </select>
+        </label>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); column-gap: 24px; row-gap: 48px;">
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-05.webp" alt="Guipure Lace Border" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+                <span style="position: absolute; top: 14px; left: 14px; background: var(--bg); color: var(--ink); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 6px 10px;">New</span>
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Guipure Lace Border</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 18 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">3" guipure, scalloped edge</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #7FB9C7; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #EDE3CF; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">+9 colours</span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-06.webp" alt="Fan-Scallop Cutwork Lace" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Fan-Scallop Cutwork Lace</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 22 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">4" cutwork, bridal white</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #EDE3CF; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;"></span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-01.webp" alt="Ivory Leaf Guipure" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Ivory Leaf Guipure</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 16 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">Wide &amp; narrow, sold as a pair</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #EDE3CF; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;"></span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-02.webp" alt="Petal Edge Lace" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+                <span style="position: absolute; top: 14px; left: 14px; background: var(--bg); color: var(--ink); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 6px 10px;">12 colours</span>
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Petal Edge Lace</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 14 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">2" petal border, 12 colours</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #EE6A1F; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #A58BD6; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #C2287F; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #E8A08C; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">+8</span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-04.webp" alt="Scallop Lace, Seasonal Brights" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Scallop Lace, Seasonal Brights</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 15 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">3" scallop, packed by colour</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #C99A2E; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #EE6A1F; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #A58BD6; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #8DA048; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">+4</span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-03.webp" alt="Narrow Trim Library" style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;">
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Narrow Trim Library</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 6 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">½" to 1" trims, 30+ shades</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #7FB9C7; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #C2287F; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #C99A2E; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #141414; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">+26</span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-07.webp" alt="Cord Lace" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              
+                <span style="position: absolute; top: 14px; left: 14px; background: var(--bg); color: var(--ink); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 6px 10px;">Handwork look</span>
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Cord Lace</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 20 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">Raised cord, for necklines</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #EE6A1F; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #C99A2E; border: 1px solid rgba(0,0,0,.18);"></span><span style="width: 12px; height: 12px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;"></span>
+              </div>
+            </div>
+          </a>
+        
+          <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
+              <img src="../images/th-09.webp" alt="Dori Piping Cord" style="width: 100%; height: 100%; object-fit: cover; object-position: bottom; display: block;">
+              
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 23px; line-height: 1.15;">Dori Piping Cord</span>
+                <span style="font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">AED 3 / m</span>
+              </div>
+              <span style="font-size: 13px; color: var(--muted);">Cotton cord for piping &amp; ties</span>
+              <div style="display: flex; gap: 6px; padding-top: 4px; align-items: center;">
+                <span style="width: 12px; height: 12px; border-radius: 999px; background: #FAFAFA; border: 1px solid rgba(0,0,0,.18);"></span>
+                <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">Full reels available</span>
+              </div>
+            </div>
+          </a>
+        
+        <div style="background: var(--deep); color: var(--onDeep); padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; aspect-ratio: 4 / 5; box-sizing: border-box;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 32px; line-height: 1.05;">Can’t find your shade?</span>
+            <span style="font-size: 14px; line-height: 1.65; font-weight: 300; color: var(--onDeepMuted);">Most of the wall is not online yet. Send a photo of your fabric and we will reply with matching laces.</span>
+          </div>
+          <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--onDeep); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;">Match on WhatsApp</a>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 32px;">
+        <div style="width: 220px; height: 2px; background: var(--line);"><div style="width: 30%; height: 2px; background: var(--ink);"></div></div>
+        <span style="font-size: 13px; color: var(--muted);">You’ve seen 8 of [n]</span>
+        <button style="min-height: 52px; padding: 0 36px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; cursor: pointer;">Load more</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-top: 1px solid var(--line);">
+    <div class="wrap" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; padding-top: 64px; padding-bottom: 64px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">How much do I need?</span>
+        <span style="font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Measure the edge you are trimming and add 10 cm for turning the ends. Two abaya sleeves usually take about [n] metres.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">We can stitch it on</span>
+        <span style="font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Add lace finishing at checkout and our studio will attach it to your garment. <a href="#" data-go="tailoring" style="color: var(--ink); text-decoration: underline; text-underline-offset: 3px;">See tailoring</a></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">Buying for a workshop?</span>
+        <span style="font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Full rolls at trade price for tailors and boutiques with a Threadhouse trade account.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background: var(--deep); color: var(--onDeepMuted);">
+    <div class="wrap" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 32px; padding-bottom: 32px; font-size: 12px; letter-spacing: .06em;">
+      <span style="color: var(--onDeep); font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(20px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1;">Thread House</span>
+      <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE · Prices in AED</span>
+    </div>
+  </footer>
+</div></section>
+  <section class="page" data-page="product" aria-label="Product page"><div style="background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif;">
+
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px;">Cut to order · Trade pricing on full rolls · Lace finishing by our studio</div>
+
+  <header style="border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 22px; padding-bottom: 22px;">
+      <div style="display: flex; align-items: center; gap: 26px;">
+        <button class="menu" aria-label="Open menu" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+        <nav class="navl" aria-label="Main" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;">
+          <a href="#" data-go="shop" aria-current="page" style="border-bottom: 1px solid var(--ink); padding-bottom: 3px;">Laces</a>
+          <a href="#">Threads</a>
+          <a href="#">Fastenings</a>
+          <a href="#">Tools</a>
+          <a href="#" data-go="tailoring">Tailoring</a>
+        </nav>
+      </div>
+      <a href="#" data-go="home" aria-label="Threadhouse home" style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+        <span style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(30px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</span>
+        <span style="background: var(--btn); color: var(--btnInk); font-size: 9px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; padding: 4px 12px 4px 14px; border-radius: 999px; margin-top: 5px;">Trading &amp; Tailoring</span>
+      </a>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <a class="hide-sm" href="#" style="font-size: 12px; letter-spacing: .12em; margin-right: 10px;">EN <span style="color: var(--muted);">|</span> <span style="font-family: 'Amiri', serif; font-size: 14px; letter-spacing: 0;">العربية</span></a>
+        <button aria-label="Search" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg></button>
+        <button class="hide-sm" aria-label="Account" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+        <button aria-label="Shopping bag, 0 items" style="position: relative; background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 8h14l-1 13H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap" style="padding-top: 24px; padding-bottom: 8px;">
+    <nav aria-label="Breadcrumb" style="font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);"><a href="#" data-go="home">Home</a> / <a href="#" data-go="shop">Laces &amp; trims</a> / <a href="#">Guipure borders</a></nav>
+  </div>
+
+  <section class="wrap" style="display: flex; flex-wrap: wrap; gap: 64px; padding-top: 24px; padding-bottom: 104px;">
+    <div style="flex: 999 1 560px; min-width: 0; display: flex; gap: 20px;">
+      <div class="thumbs" style="display: flex; flex-direction: column; gap: 14px; width: 92px; flex: none;">
+        
+          <button aria-label="Show image 1" style="padding: 0; border: 2px solid var(--ink); background: var(--surface); width: 92px; height: 115px; cursor: pointer; overflow: hidden;">
+            <img src="../images/th-05.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </button>
+        
+          <button aria-label="Show image 2" style="padding: 0; border: 2px solid transparent; background: var(--surface); width: 92px; height: 115px; cursor: pointer; overflow: hidden;">
+            <img src="../images/th-04.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </button>
+        
+          <button aria-label="Show image 3" style="padding: 0; border: 2px solid transparent; background: var(--surface); width: 92px; height: 115px; cursor: pointer; overflow: hidden;">
+            <img src="../images/th-03.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </button>
+        
+      </div>
+      <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+        <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); border-radius: 999px 999px 3px 3px; overflow: hidden;">
+          <img src="../images/th-05.webp" alt="Aqua guipure, on the roll and cut" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--muted);"><span>Aqua guipure, on the roll and cut</span><span>1 / 3</span></div>
+      </div>
+    </div>
+
+    <div style="flex: 1 1 400px; max-width: 520px; display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <span style="align-self: flex-start; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--eyebrow); border: 1px solid var(--line); padding: 7px 12px; border-radius: 999px;">Guipure · cut by the metre</span>
+        <h1 class="h1" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 56px; line-height: 1;">Guipure Lace Border</h1>
+        <div style="display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;">
+          <span style="font-size: 22px; font-variant-numeric: tabular-nums;">AED 18 / metre</span>
+          <span style="font-size: 13px; color: var(--muted);">Incl. VAT · trade price on full rolls</span>
+        </div>
+        <p style="margin: 0; font-size: 15.5px; line-height: 1.75; font-weight: 300; color: var(--muted);">A raised guipure border with a deep petal scallop. It holds its shape without a backing, so it sits beautifully on abaya sleeves, dupatta edges and kurta hems.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 24px;">
+        <div style="font-size: 13px; letter-spacing: .1em;">Colour · <span style="color: var(--muted);">Aqua</span></div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          
+            <button aria-label="Aqua" aria-pressed="" style="width: 64px; height: 64px; border-radius: 999px; border: 2px solid var(--ink); background: transparent; padding: 3px; cursor: pointer;"><img src="../images/th-05.webp" alt="" style="width: 100%; height: 100%; border-radius: 999px; object-fit: cover; display: block;"></button>
+          
+            <button aria-label="Bridal white" style="width: 64px; height: 64px; border-radius: 999px; border: 2px solid transparent; background: transparent; padding: 3px; cursor: pointer;"><img src="../images/th-06.webp" alt="" style="width: 100%; height: 100%; border-radius: 999px; object-fit: cover; display: block;"></button>
+          
+            <button aria-label="Ivory" style="width: 64px; height: 64px; border-radius: 999px; border: 2px solid transparent; background: transparent; padding: 3px; cursor: pointer;"><img src="../images/th-01.webp" alt="" style="width: 100%; height: 100%; border-radius: 999px; object-fit: cover; display: block;"></button>
+          
+        </div>
+        <span style="font-size: 13px; color: var(--muted);">9 more shades in store. <a href="#" style="color: var(--ink); text-decoration: underline; text-underline-offset: 3px;">Ask for a match</a></span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 13px; letter-spacing: .1em;">Width · <span style="color: var(--muted);">3" wide</span></div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+          
+            <button style="min-height: 48px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer;">2"</button>
+          
+            <button aria-pressed="" style="min-height: 48px; border: 1px solid var(--btn); background: var(--btn); color: var(--btnInk); font: inherit; font-size: 14px; cursor: pointer;">3"</button>
+          
+            <button style="min-height: 48px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer;">4"</button>
+          
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        
+          <button aria-pressed="" style="text-align: left; padding: 14px 16px; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 14px;">By the metre</span><span style="font-size: 12px; color: var(--muted);">Cut to your length</span></button>
+        
+          <button style="text-align: left; padding: 14px 16px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 14px;">Full roll · 25 m</span><span style="font-size: 12px; color: var(--muted);">Trade price AED 425</span></button>
+        
+      </div>
+
+      
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <span style="font-size: 13px; letter-spacing: .1em;">Length in metres</span>
+          <div style="display: flex; align-items: center; border: 1px solid var(--line);">
+            <button aria-label="Decrease length" style="width: 48px; height: 48px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 20px; cursor: pointer;">−</button>
+            <span style="min-width: 70px; text-align: center; font-size: 16px; font-variant-numeric: tabular-nums;">3 m</span>
+            <button aria-label="Increase length" style="width: 48px; height: 48px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 20px; cursor: pointer;">+</button>
+          </div>
+        </div>
+      
+
+      <label style="display: flex; gap: 14px; align-items: flex-start; background: var(--surface); padding: 16px 18px; cursor: pointer;">
+        <input type="checkbox" style="width: 20px; height: 20px; margin-top: 2px; accent-color: var(--btn);">
+        <span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 14px;">Have our studio stitch it on · + AED 35</span><span style="font-size: 12.5px; line-height: 1.5; color: var(--muted);">Drop your garment at the Sharjah counter, or we collect. [Confirm price and turnaround.]</span></span>
+      </label>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 15px;"><span style="color: var(--muted);">Total</span><span style="font-size: 22px; font-variant-numeric: tabular-nums;">AED 54</span></div>
+        <button style="min-height: 56px; border: 0; background: var(--btn); color: var(--btnInk); font: inherit; font-size: 13px; letter-spacing: .22em; text-transform: uppercase; cursor: pointer;">Add to bag</button>
+        <a href="#" style="min-height: 52px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg>Send a fabric photo to match</a>
+        <div style="display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); padding-top: 6px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"></path><circle cx="12" cy="10" r="2"></circle></svg>In stock at the Sharjah counter</div>
+      </div>
+
+      <div style="border-top: 1px solid var(--line);">
+        
+          <div style="border-bottom: 1px solid var(--line);">
+            <button aria-expanded="" style="width: 100%; min-height: 60px; display: flex; justify-content: space-between; align-items: center; background: none; border: 0; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; cursor: pointer; text-align: left;">Details<span aria-hidden="true" style="font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 300;">−</span></button>
+            
+              <p style="margin: 0; padding-bottom: 22px; font-size: 14.5px; line-height: 1.75; font-weight: 300; color: var(--muted); white-space: pre-line;">Polyester guipure, no backing net.
+Scalloped one edge, straight heading the other.
+Colourfast in a cool wash.</p>
+            
+          </div>
+        
+          <div style="border-bottom: 1px solid var(--line);">
+            <button style="width: 100%; min-height: 60px; display: flex; justify-content: space-between; align-items: center; background: none; border: 0; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; cursor: pointer; text-align: left;">Cutting &amp; delivery<span aria-hidden="true" style="font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 300;">+</span></button>
+            
+          </div>
+        
+          <div style="border-bottom: 1px solid var(--line);">
+            <button style="width: 100%; min-height: 60px; display: flex; justify-content: space-between; align-items: center; background: none; border: 0; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-size: 22px; padding: 0; cursor: pointer; text-align: left;">Sewing tips<span aria-hidden="true" style="font-family: 'Jost', sans-serif; font-size: 20px; font-weight: 300;">+</span></button>
+            
+          </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-top: 1px solid var(--line);">
+    <div class="wrap" style="padding-top: 88px; padding-bottom: 96px;">
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px;">
+        <span style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">To finish the job</span>
+        <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; line-height: 1;">You’ll also <i>need</i></h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px;">
+        
+          <a href="#" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+              <img src="../images/th-08.webp" alt="Sewing Thread" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+              <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Sewing Thread</span>
+              <span style="font-size: 14px; white-space: nowrap;">AED 5</span>
+            </div>
+          </a>
+        
+          <a href="#" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+              <img src="../images/th-38.webp" alt="Sewing Needles, 25" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+              <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Sewing Needles, 25</span>
+              <span style="font-size: 14px; white-space: nowrap;">AED 9</span>
+            </div>
+          </a>
+        
+          <a href="#" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+              <img src="../images/th-26.webp" alt="Thread Cutter" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+              <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Thread Cutter</span>
+              <span style="font-size: 14px; white-space: nowrap;">AED 7</span>
+            </div>
+          </a>
+        
+          <a href="#" style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+              <img src="../images/th-27.webp" alt="Seam Ripper" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+              <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Seam Ripper</span>
+              <span style="font-size: 14px; white-space: nowrap;">AED 6</span>
+            </div>
+          </a>
+        
+      </div>
+    </div>
+  </section>
+
+  <footer style="background: var(--deep); color: var(--onDeepMuted);">
+    <div class="wrap" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 32px; padding-bottom: 32px; font-size: 12px; letter-spacing: .06em;">
+      <span style="color: var(--onDeep); font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(20px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1;">Thread House</span>
+      <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE · Prices in AED</span>
+    </div>
+  </footer>
+</div></section>
+  <section class="page" data-page="tailoring" aria-label="Tailoring services"><div style="background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif;">
+
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px; border-bottom: 1px solid var(--line);">Walk-ins welcome · Book ahead for stitching &amp; fittings</div>
+
+  <header style="border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 22px; padding-bottom: 22px;">
+      <div style="display: flex; align-items: center; gap: 26px;">
+        <button class="menu" aria-label="Open menu" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+        <nav class="navl" aria-label="Main" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;">
+          <a href="#" data-go="shop">Laces</a>
+          <a href="#">Threads</a>
+          <a href="#">Fastenings</a>
+          <a href="#">Tools</a>
+          <a href="#" aria-current="page" style="border-bottom: 1px solid var(--ink); padding-bottom: 3px;">Tailoring</a>
+        </nav>
+      </div>
+      <a href="#" data-go="home" aria-label="Threadhouse home" style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+        <span style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(30px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</span>
+        <span style="background: var(--btn); color: var(--btnInk); font-size: 9px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; padding: 4px 12px 4px 14px; border-radius: 999px; margin-top: 5px;">Trading &amp; Tailoring</span>
+      </a>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <a class="hide-sm" href="#" style="font-size: 12px; letter-spacing: .12em; margin-right: 10px;">EN <span style="color: var(--muted);">|</span> <span style="font-family: 'Amiri', serif; font-size: 14px; letter-spacing: 0;">العربية</span></a>
+        <button aria-label="Search" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg></button>
+        <button class="hide-sm" aria-label="Account" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+        <button aria-label="Shopping bag, 0 items" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 8h14l-1 13H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="wrap" style="padding-top: 80px; padding-bottom: 104px;">
+    <div class="stack" style="display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 72px; align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--eyebrow);">Tailoring &amp; services</div>
+        <h1 class="h1" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 92px; line-height: .96;">The studio <i>behind the counter.</i></h1>
+        <div style="font-family: 'Amiri', serif; font-size: 24px; color: var(--muted);">خياطة وتعديل الملابس</div>
+        <p style="margin: 0; max-width: 520px; font-size: 17px; line-height: 1.75; font-weight: 300; color: var(--muted);">Our tailors work a few steps from the lace wall. Choose your trims in the shop, hand over the garment, and collect it stitched, altered or finished.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+          <a href="#book" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Book an appointment</a>
+          <a href="#prices" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 30px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">See prices</a>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; align-items: end;">
+        <div style="aspect-ratio: 3 / 4.4; border-radius: 999px 999px 3px 3px; overflow: hidden;">
+          <img src="../images/th-14.webp" alt="Tailor's measuring tape" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+        <div style="aspect-ratio: 3 / 4; border-radius: 999px 999px 3px 3px; overflow: hidden;">
+          <img src="../images/th-03.webp" alt="Wall of narrow lace trims" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="border-top: 1px solid var(--line);">
+    <div class="wrap" style="padding-top: 96px; padding-bottom: 104px;">
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">What we do</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 54px; line-height: 1;">Six ways <i>we can help</i></h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px;">
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-16.webp" alt="Tailoring scissors in their box" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Stitching</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">01</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">Abayas, kurtas, shalwar kameez, blouses and dresses cut and sewn to your measurements, from your fabric or ours.</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>from AED [n]</span>
+                <span style="color: var(--muted);">[n] days</span>
+              </div>
+            </div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-27.webp" alt="Seam ripper" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Alterations</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">02</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">Shortening, taking in, letting out, sleeves and shoulders. Small jobs are often ready while you shop.</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>from AED [n]</span>
+                <span style="color: var(--muted);">Same day to [n] days</span>
+              </div>
+            </div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-05.webp" alt="Aqua guipure lace" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Lace &amp; trim finishing</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">03</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">Choose a lace or piping from our wall and we attach it to sleeves, hems, necklines or dupatta edges.</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>from AED [n] / metre</span>
+                <span style="color: var(--muted);">[n] days</span>
+              </div>
+            </div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-35.webp" alt="YKK zips" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Zips, hooks &amp; buttons</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">04</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">Broken zip, missing hook or a lost button replaced with a matching one from stock.</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>from AED [n]</span>
+                <span style="color: var(--muted);">Usually same day</span>
+              </div>
+            </div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-23.webp" alt="Sewing machine belt" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Machine parts &amp; advice</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">05</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">Bring your old bobbin case, belt or needle and we will find the right replacement. [Confirm if machine servicing is offered.]</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>Parts priced in store</span>
+                <span style="color: var(--muted);"></span>
+              </div>
+            </div>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);">
+            <div style="height: 240px; background: #FFFFFF; overflow: hidden;">
+              <img src="../images/th-20.webp" alt="Tag gun" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
+            <div style="padding: 28px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 30px; line-height: 1.05;">Trade supply</span>
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--eyebrow);">06</span>
+              </div>
+              <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted); flex-grow: 1;">For tailors, ateliers and boutiques: rolls, boxes and tagging supplies at trade price, reserved for regular orders.</p>
+              <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 13px;">
+                <span>Trade pricing</span>
+                <span style="color: var(--muted);">Apply in store</span>
+              </div>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+    <div class="wrap" style="padding-top: 88px; padding-bottom: 88px;">
+      <div class="stack" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px;">
+        
+          <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--eyebrow); padding-top: 26px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 56px; line-height: 1; color: var(--eyebrow);">01</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 28px;">Bring it in</span>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">Bring your garment or fabric, or choose fabric, lace and trims from the shop floor.</p>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--eyebrow); padding-top: 26px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 56px; line-height: 1; color: var(--eyebrow);">02</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 28px;">Measure &amp; agree</span>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">We measure, pin and agree the work and the price with you before a stitch is sewn.</p>
+          </div>
+        
+          <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--eyebrow); padding-top: 26px;">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 56px; line-height: 1; color: var(--eyebrow);">03</span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 28px;">Collect or deliver</span>
+            <p style="margin: 0; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">We message you on WhatsApp when it is ready. Collect in Sharjah or have it delivered.</p>
+          </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section id="prices" class="wrap" style="padding-top: 96px; padding-bottom: 104px;">
+    <div class="stack" style="display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 64px;">
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrow);">Price list</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1;">Clear prices, <i>agreed up front.</i></h2>
+        <p style="margin: 0; font-size: 14.5px; line-height: 1.7; font-weight: 300; color: var(--muted);">Final price confirmed when we see the garment. [All prices to be supplied by the client.]</p>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        
+          <div style="display: flex; flex-direction: column; margin-bottom: 36px;">
+            <span style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; border-bottom: 1px solid var(--ink);">Alterations</span>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Abaya hem, shorten</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Take in or let out, sides</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Sleeve length</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+          </div>
+        
+          <div style="display: flex; flex-direction: column; margin-bottom: 36px;">
+            <span style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; border-bottom: 1px solid var(--ink);">Finishing</span>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Lace on sleeves, per pair</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Lace on hem, per metre</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Piping or dori ties</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+          </div>
+        
+          <div style="display: flex; flex-direction: column; margin-bottom: 36px;">
+            <span style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; border-bottom: 1px solid var(--ink);">Repairs</span>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Zip replacement</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line);">
+                <span style="font-size: 16px;">Hooks, press studs or buttons</span>
+                <span style="flex-grow: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px);"></span>
+                <span style="font-size: 15px; color: var(--muted); white-space: nowrap;">from AED [n]</span>
+              </div>
+            
+          </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section id="book" style="background: var(--deep); color: var(--onDeep); border-top: 1px solid var(--line);">
+    <div class="wrap stack" style="display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 80px; padding-top: 104px; padding-bottom: 104px;">
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--eyebrowDeep);">Book an appointment</div>
+        <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 60px; line-height: 1;">Tell us what <i>needs doing.</i></h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.75; font-weight: 300; color: var(--onDeepMuted);">Book a slot for measuring or a fitting, and we will have the right tailor and the right trims ready when you arrive.</p>
+        <div style="display: flex; flex-direction: column; gap: 18px; font-size: 15px; line-height: 1.6; border-top: 1px solid var(--onDeepMuted); padding-top: 28px;">
+          <div style="display: flex; gap: 14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"></path><circle cx="12" cy="10" r="2"></circle></svg><span>[Shop number, building, street]<br><span style="color: var(--onDeepMuted);">[Area], Sharjah, UAE</span></span></div>
+          <div style="display: flex; gap: 14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px;"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg><span>[Opening days and hours]</span></div>
+          <div style="display: flex; gap: 14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg><span>WhatsApp [+971 phone number]</span></div>
+        </div>
+      </div>
+      <form class="stack" style="background: var(--surface); color: var(--ink); padding: 48px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; border: 1px solid var(--line);">
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Full name<input type="text" placeholder="Your name" style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none;"></label>
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Mobile (WhatsApp)<input type="tel" placeholder="+971" style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none;"></label>
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Service<select style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none;"><option>Stitching, made to measure</option><option>Alterations</option><option>Lace &amp; trim finishing</option><option>Zip or button replacement</option><option>Machine parts advice</option><option>Trade account enquiry</option></select></label>
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Garment<select style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none;"><option>Abaya</option><option>Kurta / shalwar kameez</option><option>Dress or blouse</option><option>Trousers</option><option>Other</option></select></label>
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Preferred date<input type="date" style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none; color-scheme: var(--scheme);"></label>
+        <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Time<select style="min-height: 50px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none;"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></label>
+        <label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);">Details<textarea rows="4" placeholder="e.g. shorten two abayas by 5 cm and add the aqua guipure to the sleeves" style="padding: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; letter-spacing: 0; text-transform: none; resize: vertical;"></textarea></label>
+        <div style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <span style="font-size: 13px; color: var(--muted);">We confirm every booking on WhatsApp.</span>
+          <button type="button" style="min-height: 56px; padding: 0 36px; border: 0; background: var(--btn); color: var(--btnInk); font: inherit; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; cursor: pointer;">Request appointment</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 96px; padding-bottom: 104px;">
+    <div class="stack" style="display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 64px;">
+      <h2 class="h2" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1;">Good <i>to know</i></h2>
+      <div style="border-top: 1px solid var(--line);">
+        
+          <div class="stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; padding: 28px 0; border-bottom: 1px solid var(--line);">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.25;">Can I bring fabric bought elsewhere?</span>
+            <span style="font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">Yes. We stitch your own fabric and can supply the lining, thread, zips and trims to go with it.</span>
+          </div>
+        
+          <div class="stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; padding: 28px 0; border-bottom: 1px solid var(--line);">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.25;">How long does stitching take?</span>
+            <span style="font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">[Confirm with client: standard turnaround and any express option.]</span>
+          </div>
+        
+          <div class="stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; padding: 28px 0; border-bottom: 1px solid var(--line);">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.25;">Do you have a female tailor for measurements?</span>
+            <span style="font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">[Confirm with client.]</span>
+          </div>
+        
+          <div class="stack" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; padding: 28px 0; border-bottom: 1px solid var(--line);">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.25;">Is there parking?</span>
+            <span style="font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--muted);">[Parking and access details for the shop.]</span>
+          </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid var(--line); color: var(--muted);">
+    <div class="wrap" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 32px; padding-bottom: 32px; font-size: 12px; letter-spacing: .06em;">
+      <span style="color: var(--ink); font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(20px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1;">Thread House</span>
+      <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE · Prices in AED</span>
+    </div>
+  </footer>
+</div></section>
+  <section class="page" data-page="mobile" aria-label="Mobile home page">
+    <div class="phone-stage"><div class="phone"><div class="phone-screen"><div style="width: 390px; height: 3829px; overflow: hidden; position: relative; background: var(--bg); color: var(--ink); font-family: Jost, system-ui, sans-serif;">
+
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; text-align: center; padding: 9px 16px;">Now open in Sharjah · Trade prices</div>
+
+  <header style="display: grid; grid-template-columns: 88px minmax(0, 1fr) 88px; align-items: center; padding: 8px; border-bottom: 1px solid var(--line);">
+    <div style="display: flex;">
+      <button aria-label="Open menu" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      <button aria-label="Search" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4.2-4.2"></path></svg></button>
+    </div>
+    <a href="#" data-go="home" aria-label="Threadhouse home" style="display: flex; flex-direction: column; align-items: center;">
+      <span style="font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(21px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1; color: var(--wmColor);">Thread House</span>
+      <span style="background: var(--btn); color: var(--btnInk); font-size: 7.5px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; padding: 3px 9px 3px 10px; border-radius: 999px; margin-top: 4px;">Trading &amp; Tailoring</span>
+    </a>
+    <div style="display: flex; justify-content: flex-end;">
+      <a href="#" aria-label="العربية" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; font-family: 'Amiri', serif; font-size: 16px;">ع</a>
+      <button aria-label="Shopping bag, 0 items" style="background: none; border: 0; color: var(--ink); width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 8h14l-1 13H6z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></button>
+    </div>
+  </header>
+
+  <section style="padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="height: 420px; border-radius: 999px 999px 3px 3px; overflow: hidden;">
+      <img src="../images/th-02.webp" alt="Rolls of lace in orange, lilac, magenta and peach" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px; text-align: center; align-items: center;">
+      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--eyebrow);">Haberdashery &amp; tailoring</div>
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; line-height: 1;">Everything a garment <i>needs.</i></h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.65; font-weight: 300; color: var(--muted);">Laces by the metre, threads, zips, buttons and tools, with a tailoring studio in-house.</p>
+      <a href="#" data-go="shop" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 52px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; margin-top: 6px;">Shop supplies</a>
+      <a href="#" data-go="tailoring" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-height: 52px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Book a tailor</a>
+    </div>
+  </section>
+
+  <section style="padding: 0 0 40px; display: flex; flex-direction: column; gap: 18px;">
+    <div style="padding: 0 16px; display: flex; justify-content: space-between; align-items: baseline;">
+      <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 30px;">Departments</h2>
+      <a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px;">All</a>
+    </div>
+    <div style="display: flex; gap: 12px; overflow-x: auto; padding: 0 16px;">
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-04.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Laces &amp; trims</span>
+        </a>
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-11.webp" alt="" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Threads</span>
+        </a>
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-35.webp" alt="" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Zips</span>
+        </a>
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-15.webp" alt="" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Buttons</span>
+        </a>
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-29.webp" alt="" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Linings</span>
+        </a>
+      
+        <a href="#" data-go="shop" style="flex: none; width: 120px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="width: 120px; height: 150px; background: #FFFFFF; border-radius: 999px 999px 3px 3px; overflow: hidden; border: 1px solid var(--line);">
+            <img src="../images/th-26.webp" alt="" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-size: 13px; letter-spacing: .04em; text-align: center;">Tools</span>
+        </a>
+      
+    </div>
+  </section>
+
+  <section style="background: var(--deep); color: var(--onDeep); padding: 40px 16px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: 150px 150px; gap: 8px;">
+      <img src="../images/th-05.webp" alt="Aqua guipure lace" style="grid-column: 1 / 3; width: 100%; height: 100%; object-fit: cover; display: block;">
+      <img src="../images/th-06.webp" alt="White scalloped lace" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      <img src="../images/th-07.webp" alt="Orange and gold cord lace" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+    </div>
+    <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--onDeepMuted); padding-top: 8px;">The lace room</div>
+    <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 36px; line-height: 1.02;">Guipure, cutwork and cord, <i>in every colour.</i></h2>
+    <a href="#" data-go="shop" style="display: flex; align-items: center; justify-content: center; min-height: 52px; border: 1px solid var(--onDeep); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Shop laces</a>
+  </section>
+
+  <section style="padding: 48px 16px; display: flex; flex-direction: column; gap: 18px;">
+    <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 30px;">Workroom essentials</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 26px;">
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-30.webp" alt="Overlock Thread Cone" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.15;">Overlock Thread Cone</span>
+          <span style="font-size: 13px; color: var(--muted); margin-top: -4px;">AED 12</span>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-22.webp" alt="Press Buttons, Koh-i-noor" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.15;">Press Buttons, Koh-i-noor</span>
+          <span style="font-size: 13px; color: var(--muted); margin-top: -4px;">AED 10 / card</span>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-12.webp" alt="Openable Zipper, 1 m" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.15;">Openable Zipper, 1 m</span>
+          <span style="font-size: 13px; color: var(--muted); margin-top: -4px;">AED 9</span>
+        </a>
+      
+        <a href="#" data-go="product" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="position: relative; aspect-ratio: 1 / 1; background: #FFFFFF; border: 1px solid var(--line);">
+            <img src="../images/th-33.webp" alt="Blouse Cups" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+          </div>
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.15;">Blouse Cups</span>
+          <span style="font-size: 13px; color: var(--muted); margin-top: -4px;">AED 8 / pair</span>
+        </a>
+      
+    </div>
+  </section>
+
+  <section style="padding: 0 16px 48px; display: flex; flex-direction: column;">
+    <div style="height: 220px; border-radius: 999px 999px 3px 3px; overflow: hidden; margin-bottom: 20px;">
+      <img src="../images/th-14.webp" alt="Measuring tape" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+    </div>
+    <h2 style="margin: 0 0 14px; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 30px;">Bought the lace? <i>We’ll stitch it on.</i></h2>
+    
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-top: 1px solid var(--line);">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--eyebrow); width: 28px; flex: none;">01</span>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Stitching</span>
+          <span style="font-size: 14px; line-height: 1.55; font-weight: 300; color: var(--muted);">Made to measure, from your fabric or ours.</span>
+        </div>
+      </div>
+    
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-top: 1px solid var(--line);">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--eyebrow); width: 28px; flex: none;">02</span>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Alterations</span>
+          <span style="font-size: 14px; line-height: 1.55; font-weight: 300; color: var(--muted);">Hems, fitting and sleeves, often same day.</span>
+        </div>
+      </div>
+    
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-top: 1px solid var(--line);">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--eyebrow); width: 28px; flex: none;">03</span>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Lace finishing</span>
+          <span style="font-size: 14px; line-height: 1.55; font-weight: 300; color: var(--muted);">Laces from our wall, attached by our tailors.</span>
+        </div>
+      </div>
+    
+      <div style="display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-top: 1px solid var(--line);">
+        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--eyebrow); width: 28px; flex: none;">04</span>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px;">Repairs</span>
+          <span style="font-size: 14px; line-height: 1.55; font-weight: 300; color: var(--muted);">Zips, hooks and buttons replaced from stock.</span>
+        </div>
+      </div>
+    
+    <a href="#" data-go="tailoring" style="display: flex; align-items: center; justify-content: center; min-height: 52px; background: var(--btn); color: var(--btnInk); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; margin-top: 12px;">Book an appointment</a>
+  </section>
+
+  <section style="margin: 0 16px; background: var(--surface); border: 1px solid var(--line); padding: 28px 22px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--eyebrow);">Visit the shop</div>
+    <span style="font-family: 'Cormorant Garamond', serif; font-size: 28px; line-height: 1.1;">Bring your fabric. <i>We’ll find the match.</i></span>
+    <span style="font-size: 14px; line-height: 1.6; color: var(--muted);">[Shop address], Sharjah<br>[Opening hours]</span>
+    <a href="#" style="display: flex; align-items: center; justify-content: center; min-height: 52px; border: 1px solid var(--ink); font-size: 12px; letter-spacing: .22em; text-transform: uppercase;">Get directions</a>
+  </section>
+
+  <footer style="margin-top: 48px; background: var(--deep); color: var(--onDeepMuted); padding: 40px 16px; display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center;">
+    <span style="color: var(--onDeep); font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(22px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1;">Thread House</span>
+    <div style="display: flex; gap: 20px; font-size: 13px; flex-wrap: wrap; justify-content: center;"><a href="#">Delivery</a><a href="#">Trade accounts</a><a href="#">Contact</a></div>
+    <span style="font-size: 11px; letter-spacing: .06em;">© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE</span>
+  </footer>
+
+  <a href="#" aria-label="Chat with us on WhatsApp" style="position: absolute; right: 24px; top: 470px; width: 56px; height: 56px; border-radius: 999px; background: var(--btn); color: var(--btnInk); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,.18);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 9 19z"></path></svg></a>
+</div></div><div class="phone-caption">Scroll inside the phone</div></div></div>
+  </section>
+  <section class="page" data-page="brand" aria-label="Brand and colours">
+    <div class="brand-stage"><div class="brand-fit"><div class="brand-scale"><div style="width: 1440px; height: 1297px; box-sizing: border-box; padding: 72px 80px; background: rgb(251, 248, 243); color: rgb(30, 26, 23); font-family: Jost, system-ui, sans-serif; display: flex; flex-direction: column; gap: 52px;">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #6B5D52;">Brand direction · v2 · colours from the shop signage</div>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px;">
+        <div style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 68px; line-height: 1; letter-spacing: .12em;">THREAD HOUSE</div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span style="background: #B0185E; color: #FFFFFF; font-size: 12px; font-weight: 500; letter-spacing: .28em; text-transform: uppercase; padding: 7px 18px 7px 20px; border-radius: 999px;">Trading &amp; Tailoring</span>
+          <span style="font-family: 'Amiri', serif; font-size: 24px; color: #6B5D52;">بيت الخيط للتجارة والخياطة</span>
+        </div>
+      </div>
+      <p style="margin: 0; max-width: 580px; font-size: 16px; line-height: 1.65; color: #4E443C; font-weight: 300;">Four website colour schemes taken from the signboard designs: the cream and rosewood board, the royal purple board, the wooden workshop board and the black and gold shopfront sign. Each keeps the signage wordmark and its "Trading &amp; Tailoring" line, so the website and the shopfront feel like one brand.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; border-left: 1px solid #E2D8CA; padding-left: 40px; min-width: 540px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #6B5D52;">Display</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 44px; line-height: 1;">Aa <i>Aa</i></div>
+        <div style="font-size: 13px; color: #4E443C;">Cormorant Garamond</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #6B5D52;">Body &amp; UI</div>
+        <div style="font-family: 'Jost', sans-serif; font-weight: 300; font-size: 44px; line-height: 1;">Aa</div>
+        <div style="font-size: 13px; color: #4E443C;">Jost Light / Regular</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #6B5D52;">Arabic</div>
+        <div style="font-family: 'Amiri', serif; font-size: 40px; line-height: 1.1;">أ ب ج</div>
+        <div style="font-size: 13px; color: #4E443C;">Amiri</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px;">
+    
+      <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E8DFD2; border-radius: 6px; overflow: hidden;">
+        <div style="height: 420px; background: #FBF5EC; color: #3A0F1E; display: flex; flex-direction: column; position: relative;">
+          <div style="background: #6E1230; color: #FBF5EC; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 7px;">Fabrics · Custom stitching · Alterations</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid #E8D5C3; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #6E4A52;">
+            <span>Laces · Tailoring</span>
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 4px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; color: inherit;">Thread House</span><span style="background: #B0185E; color: #FFFFFF; font-size: 6px; letter-spacing: .2em; padding: 2px 7px; border-radius: 999px;">TRADING &amp; TAILORING</span></span>
+            <span>Bag (0)</span>
+          </div>
+          <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 22px 18px 18px; align-items: end;">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px;">
+              <div style="font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: #A0174F;">Your style, our craft</div>
+              <div style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; line-height: 1.02;">Everything a garment <i>needs.</i></div>
+              <div style="font-size: 10px; line-height: 1.5; color: #6E4A52;">Laces · threads · tailoring</div>
+              <div style="align-self: flex-start; background: #B0185E; color: #FFFFFF; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; padding: 9px 14px;">Shop supplies</div>
+            </div>
+            <div style="height: 260px; border-radius: 999px 999px 2px 2px; overflow: hidden; border: 2px solid #B0185E;">
+              <img src="../images/th-02.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          </div>
+          
+        </div>
+        <div style="padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; line-height: 1;">Rosewood &amp; Cream</div>
+            <div style="font-size: 11px; letter-spacing: .14em; color: #6B5D52;">01</div>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4E443C; font-weight: 300; min-height: 68px;">From the cream signboard: burgundy lettering, a magenta ribbon and a fuchsia silk drape. Warm, feminine and confident.</p>
+          <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #FBF5EC; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Cream</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#FBF5EC</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #F7DCE5; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Blush</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#F7DCE5</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #6E1230; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Burgundy</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#6E1230</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #B0185E; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Magenta</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#B0185E</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #E0207A; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Fuchsia silk</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#E0207A</div>
+              </div>
+            
+          </div>
+          <div style="border-top: 1px solid #EEE6DA; padding-top: 12px; font-size: 13px; line-height: 1.5; color: #4E443C;"><span style="letter-spacing: .14em; text-transform: uppercase; font-size: 10px; color: #6B5D52;">Best for · </span>a boutique feel that flatters laces and bridal work.</div>
+        </div>
+      </div>
+    
+      <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E8DFD2; border-radius: 6px; overflow: hidden;">
+        <div style="height: 420px; background: #2A0F3D; color: #F7ECD6; display: flex; flex-direction: column; position: relative;">
+          <div style="background: #1A0727; color: #F7ECD6; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 7px;">Fabrics · Custom stitching · Alterations</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid #4F2B69; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #CDB8DA;">
+            <span>Laces · Tailoring</span>
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 4px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; color: inherit;">Thread House</span><span style="background: #E0B24F; color: #2A0F3D; font-size: 6px; letter-spacing: .2em; padding: 2px 7px; border-radius: 999px;">TRADING &amp; TAILORING</span></span>
+            <span>Bag (0)</span>
+          </div>
+          <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 22px 18px 18px; align-items: end;">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px;">
+              <div style="font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: #E5BC5C;">Fabrics | Stitching | Alterations</div>
+              <div style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; line-height: 1.02;">Everything a garment <i>needs.</i></div>
+              <div style="font-size: 10px; line-height: 1.5; color: #CDB8DA;">Laces · threads · tailoring</div>
+              <div style="align-self: flex-start; background: #E0B24F; color: #2A0F3D; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; padding: 9px 14px;">Shop supplies</div>
+            </div>
+            <div style="height: 260px; border-radius: 999px 999px 2px 2px; overflow: hidden; border: 2px solid #E0B24F;">
+              <img src="../images/th-02.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          </div>
+          
+        </div>
+        <div style="padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; line-height: 1;">Royal Purple &amp; Gold</div>
+            <div style="font-size: 11px; letter-spacing: .14em; color: #6B5D52;">02</div>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4E443C; font-weight: 300; min-height: 68px;">From the purple signboard: deep royal purple, gold lettering and a magenta curtain. Rich and festive, made for evenings and Eid.</p>
+          <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #2A0F3D; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Royal purple</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#2A0F3D</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #3A1752; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Plum</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#3A1752</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #E0B24F; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Gold</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#E0B24F</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #F7ECD6; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Pearl</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#F7ECD6</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #D12A8C; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Magenta</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#D12A8C</div>
+              </div>
+            
+          </div>
+          <div style="border-top: 1px solid #EEE6DA; padding-top: 12px; font-size: 13px; line-height: 1.5; color: #4E443C;"><span style="letter-spacing: .14em; text-transform: uppercase; font-size: 10px; color: #6B5D52;">Best for · </span>high-impact launches and the tailoring pages.</div>
+        </div>
+      </div>
+    
+      <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E8DFD2; border-radius: 6px; overflow: hidden;">
+        <div style="height: 420px; background: #F8EEDD; color: #14235E; display: flex; flex-direction: column; position: relative;">
+          <div style="background: #1D3A9A; color: #FFFFFF; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 7px;">Fabrics · Custom stitching · Alterations</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid #DFC59C; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #4A4A63;">
+            <span>Laces · Tailoring</span>
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 4px;"><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; color: inherit;">Thread House</span><span style="background: #C8202A; color: #FFFFFF; font-size: 6px; letter-spacing: .2em; padding: 2px 7px; border-radius: 999px;">TRADING &amp; TAILORING</span></span>
+            <span>Bag (0)</span>
+          </div>
+          <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 22px 18px 18px; align-items: end;">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px;">
+              <div style="font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: #17692B;">Quality fabrics · Perfect fit</div>
+              <div style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; line-height: 1.02;">Everything a garment <i>needs.</i></div>
+              <div style="font-size: 10px; line-height: 1.5; color: #4A4A63;">Laces · threads · tailoring</div>
+              <div style="align-self: flex-start; background: #C8202A; color: #FFFFFF; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; padding: 9px 14px;">Shop supplies</div>
+            </div>
+            <div style="height: 260px; border-radius: 999px 999px 2px 2px; overflow: hidden; border: 2px solid #C8202A;">
+              <img src="../images/th-02.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          </div>
+          
+        </div>
+        <div style="padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; line-height: 1;">Workshop Wood</div>
+            <div style="font-size: 11px; letter-spacing: .14em; color: #6B5D52;">03</div>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4E443C; font-weight: 300; min-height: 68px;">From the wooden signboard: light oak, royal blue, thread red and green. Friendly, bright and honest, like a busy neighbourhood workshop.</p>
+          <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #F8EEDD; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Light oak</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#F8EEDD</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #DCEAD8; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Sage</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#DCEAD8</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #1D3A9A; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Royal blue</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#1D3A9A</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #C8202A; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Thread red</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#C8202A</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #17692B; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Green</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#17692B</div>
+              </div>
+            
+          </div>
+          <div style="border-top: 1px solid #EEE6DA; padding-top: 12px; font-size: 13px; line-height: 1.5; color: #4E443C;"><span style="letter-spacing: .14em; text-transform: uppercase; font-size: 10px; color: #6B5D52;">Best for · </span>a broad family audience and trade customers.</div>
+        </div>
+      </div>
+    
+      <div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E8DFD2; border-radius: 6px; overflow: hidden;">
+        <div style="height: 420px; background: #15130F; color: #F3E9D2; display: flex; flex-direction: column; position: relative;">
+          <div style="background: #000000; color: #F3E9D2; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 7px;">Fabrics · Custom stitching · Alterations</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid #3A3224; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: #BFB197;">
+            <span>Laces · Tailoring</span>
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 4px;"><span style="font-family: 'Playball', cursive; font-weight: 400; font-size: 21px; letter-spacing: 0; text-transform: none; line-height: 1.1; white-space: nowrap; color: #D9B45A;">Thread House</span><span style="background: #D4AF5A; color: #14110C; font-size: 6px; letter-spacing: .2em; padding: 2px 7px; border-radius: 999px;">TRADING &amp; TAILORING</span></span>
+            <span>Bag (0)</span>
+          </div>
+          <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 22px 18px 18px; align-items: end;">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px;">
+              <div style="font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: #D9B45A;">Fabrics · Tailoring · Alterations</div>
+              <div style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; line-height: 1.02;">Everything a garment <i>needs.</i></div>
+              <div style="font-size: 10px; line-height: 1.5; color: #BFB197;">Laces · threads · tailoring</div>
+              <div style="align-self: flex-start; background: #D4AF5A; color: #14110C; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; padding: 9px 14px;">Shop supplies</div>
+            </div>
+            <div style="height: 260px; border-radius: 999px 999px 2px 2px; overflow: hidden; border: 2px solid #D4AF5A;">
+              <img src="../images/th-02.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          </div>
+          
+            <div style="position: absolute; top: 100px; right: 14px; background: #FFFFFF; color: #1E1A17; font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; border: 1px solid #E2D8CA;">Recommended</div>
+          
+        </div>
+        <div style="padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; line-height: 1;">Black &amp; Gold</div>
+            <div style="font-size: 11px; letter-spacing: .14em; color: #6B5D52;">04</div>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4E443C; font-weight: 300; min-height: 68px;">From the shopfront sign: matt black, gold script and warm downlights. The most premium of the four, and it matches the real sign above the door.</p>
+          <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #15130F; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Matt black</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#15130F</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #201D17; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Charcoal</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#201D17</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #D4AF5A; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Gold</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#D4AF5A</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #F3E9D2; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Cream</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#F3E9D2</div>
+              </div>
+            
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 999px; background: #7A6640; border: 1px solid rgba(0,0,0,.12);"></div>
+                <div style="font-size: 11px; line-height: 1.3; color: #1E1A17;">Bronze</div>
+                <div style="font-size: 10px; color: #6B5D52; font-variant-numeric: tabular-nums;">#7A6640</div>
+              </div>
+            
+          </div>
+          <div style="border-top: 1px solid #EEE6DA; padding-top: 12px; font-size: 13px; line-height: 1.5; color: #4E443C;"><span style="letter-spacing: .14em; text-transform: uppercase; font-size: 10px; color: #6B5D52;">Best for · </span>the main brand look, so the website and shopfront match.</div>
+        </div>
+      </div>
+    
+  </div>
+
+</div></div></div></div>
+  </section>
+</main>
+
+<nav class="dock" aria-label="Preview controls">
+  <div class="tabs" role="tablist" aria-label="Pages">
+    <span class="tab-pill" aria-hidden="true"></span>
+    <button class="tab" role="tab" data-tab="home">Home</button>
+    <button class="tab" role="tab" data-tab="shop">Laces &amp; trims</button>
+    <button class="tab" role="tab" data-tab="product">Product</button>
+    <button class="tab" role="tab" data-tab="tailoring">Tailoring</button>
+    <button class="tab" role="tab" data-tab="mobile">Mobile</button>
+    <button class="tab" role="tab" data-tab="brand">Colours</button>
+  </div>
+  <span class="sep" aria-hidden="true"></span>
+  <div class="looks" role="group" aria-label="Colour look">
+    <button class="look" data-look="rose" aria-label="Rosewood and Cream look" title="Rosewood &amp; Cream"><span></span></button>
+    <button class="look" data-look="purple" aria-label="Royal Purple and Gold look" title="Royal Purple &amp; Gold"><span></span></button>
+    <button class="look" data-look="wood" aria-label="Workshop Wood look" title="Workshop Wood"><span></span></button>
+    <button class="look" data-look="noir" aria-label="Black and Gold look" title="Black &amp; Gold"><span></span></button>
+    <div class="look-name" aria-live="polite"><span>Black &amp; Gold</span></div>
+  </div>
+</nav>
+<div class="toast" role="status">Concept preview · tap the colour swatches to switch looks</div>
+
+<script>
+/*__INIT__*/
+(function () {
+  var LOOKS = { rose: 'Rosewood & Cream', purple: 'Royal Purple & Gold', wood: 'Workshop Wood', noir: 'Black & Gold' };
+  var PAGES = ['home', 'shop', 'product', 'tailoring', 'mobile', 'brand'];
+  var root = document.documentElement;
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var looks = Array.prototype.slice.call(document.querySelectorAll('.look'));
+  var pill = document.querySelector('.tab-pill');
+  var nameBox = document.querySelector('.look-name');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canVT = typeof document.startViewTransition === 'function' && !reduce;
+  var curLook = null, curPage = null;
+
+  function store(k, v) { try { localStorage.setItem('th-' + k, v); } catch (e) {} }
+  function recall(k) { try { return localStorage.getItem('th-' + k); } catch (e) { return null; } }
+  function param(k) {
+    var init = window.__INIT__ || {};
+    if (init[k]) return init[k];
+    var m = new RegExp('[?&]' + k + '=([^&]+)').exec(location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function setName(text) {
+    var old = nameBox.querySelector('span:not(.out)');
+    if (old && old.textContent === text) return;
+    var next = document.createElement('span');
+    next.className = 'in';
+    next.textContent = text;
+    nameBox.appendChild(next);
+    if (old) { old.classList.add('out'); setTimeout(function () { old.remove(); }, 520); }
+    void next.offsetWidth;
+    next.className = '';
+  }
+
+  function applyLook(id) {
+    root.setAttribute('data-look', id);
+    looks.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.look === id)); });
+    setName(LOOKS[id]);
+    curLook = id;
+    store('look', id);
+  }
+
+  function setLook(id, btn) {
+    if (!LOOKS[id] || id === curLook) return;
+    if (!canVT || !btn) { applyLook(id); return; }
+    var r = btn.getBoundingClientRect();
+    var x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    root.classList.add('instant', 'lookvt');
+    var t = document.startViewTransition(function () { applyLook(id); });
+    t.ready.then(function () {
+      root.animate(
+        { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 1000, easing: 'cubic-bezier(.65, 0, .35, 1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    }).catch(function () {});
+    t.updateCallbackDone.catch(function () {});
+    t.finished.then(done, done);
+    function done() { root.classList.remove('instant', 'lookvt'); }
+  }
+
+  function movePill() {
+    var on = tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0];
+    if (!on) return;
+    pill.style.width = on.offsetWidth + 'px';
+    pill.style.transform = 'translateX(' + on.offsetLeft + 'px)';
+    if (on.scrollIntoView && on.parentNode.scrollWidth > on.parentNode.clientWidth) on.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+
+  function applyPage(id) {
+    pages.forEach(function (p) { p.classList.toggle('on', p.dataset.page === id); });
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === id)); });
+    window.scrollTo(0, 0);
+    var screen = document.querySelector('.phone-screen');
+    if (screen) screen.scrollTop = 0;
+    curPage = id;
+    store('page', id);
+    movePill();
+    if (id === 'brand') fitBrand();
+  }
+
+  function showPage(id) {
+    if (PAGES.indexOf(id) < 0 || id === curPage) return;
+    if (!canVT) { applyPage(id); return; }
+    root.classList.add('pagevt', 'instant');
+    var t = document.startViewTransition(function () { applyPage(id); });
+    t.ready.catch(function () {});
+    t.updateCallbackDone.catch(function () {});
+    t.finished.then(done, done);
+    function done() { root.classList.remove('pagevt', 'instant'); }
+  }
+
+  function fitBrand() {
+    var fit = document.querySelector('.brand-fit');
+    var board = document.querySelector('.brand-scale');
+    if (!fit || !board) return;
+    var w = Math.min(1440, document.documentElement.clientWidth - 32);
+    var s = w / 1440;
+    board.style.transform = 'scale(' + s + ')';
+    fit.style.width = w + 'px';
+    fit.style.height = Math.ceil(board.offsetHeight * s) + 'px';
+  }
+
+  // Controls
+  tabs.forEach(function (t) { t.addEventListener('click', function () { showPage(t.dataset.tab); }); });
+  looks.forEach(function (b) { b.addEventListener('click', function () { setLook(b.dataset.look, b); }); });
+
+  // Links inside the mockups: page links switch pages, in-page anchors scroll smoothly, the rest stay put
+  document.getElementById('app').addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    var go = a.getAttribute('data-go');
+    var href = a.getAttribute('href') || '';
+    if (go) { e.preventDefault(); showPage(go); return; }
+    if (href.charAt(0) === '#') {
+      e.preventDefault();
+      if (href.length > 1) {
+        var page = document.querySelector('.page.on');
+        var target = page && page.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    }
+  });
+  document.getElementById('app').addEventListener('submit', function (e) { e.preventDefault(); });
+
+  // Images hosted on Google Drive: fall back to the thumbnail address if the first one fails
+  document.addEventListener('error', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'IMG' && el.dataset.fb && el.src !== el.dataset.fb) el.src = el.dataset.fb;
+  }, true);
+
+  window.addEventListener('resize', function () { movePill(); if (curPage === 'brand') fitBrand(); });
+
+  // Start
+  var startLook = param('look') || recall('look') || 'noir';
+  var startPage = param('page') || 'home';
+  applyLook(LOOKS[startLook] ? startLook : 'noir');
+  applyPage(PAGES.indexOf(startPage) >= 0 ? startPage : 'home');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(movePill);
+
+  var toast = document.querySelector('.toast');
+  setTimeout(function () { toast.classList.add('show'); }, 900);
+  setTimeout(function () { toast.classList.remove('show'); }, 5600);
+  document.title = 'Thread House · Website preview';
+  root.setAttribute('data-ready', '1');
+})();
+</script>
+</body>
+</html>
