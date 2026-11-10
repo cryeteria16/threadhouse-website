@@ -44,12 +44,21 @@ a:hover { opacity: .8; }
   .h1 { font-size: 44px !important; }
 }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+.map-embed { filter: saturate(.8) brightness(.9) contrast(1.05); }
+.wa-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 58px; height: 58px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; background: var(--btn); color: var(--btnInk);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45); transition: transform .3s cubic-bezier(.3, 1.4, .5, 1);
+}
+.wa-fab:hover { opacity: 1; transform: scale(1.08); }
+.wa-fab:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"Thread House Trading & Tailoring","alternateName":"بيت الخيط للتجارة والخياطة","url":"https://threadhousetrading.com/","image":"https://threadhousetrading.com/images/th-02.webp","telephone":"+971558285595","address":{"@type":"PostalAddress","addressLocality":"Sharjah","addressRegion":"Sharjah","addressCountry":"AE","streetAddress":"Al Khan"},"geo":{"@type":"GeoCoordinates","latitude":25.325335,"longitude":55.366175},"hasMap":"https://www.google.com/maps/dir/?api=1&destination=25.325335,55.366175","sameAs":["https://www.instagram.com/threadhousetrading/","https://www.tiktok.com/@thread_house_trading"]}</script>
 </head>
 <body>
 <div style="background: var(--bg); color: var(--ink); font-family: 'Jost', system-ui, sans-serif;">
 
-  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px;">Every lace cut to the length you order · Minimum [n] metre</div>
+  <div style="background: var(--deep); color: var(--onDeep); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; text-align: center; padding: 11px 16px;">Every lace cut to the length you order · WhatsApp +971 55 828 5595</div>
 
   <header style="border-bottom: 1px solid var(--line);">
     <div class="wrap" style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 24px; padding-top: 22px; padding-bottom: 22px;">
@@ -87,9 +96,9 @@ a:hover { opacity: .8; }
         <p style="margin: 0; max-width: 480px; font-size: 16px; line-height: 1.75; font-weight: 300; color: var(--onDeepMuted);">Guipure borders, scalloped cutwork, cord laces and piping, cut by the metre or sold by the roll. Not sure of the shade? Send a photo of your fabric on WhatsApp and we will match it.</p>
       </div>
       <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; height: 300px;">
-        <img src="images/th-03.webp" loading="lazy" decoding="async" alt="Rack of narrow lace trims in many colours" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
-        <img src="images/th-02.webp" loading="lazy" decoding="async" alt="Lace rolls in orange, lilac and magenta" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
-        <img src="images/th-07.webp" loading="lazy" decoding="async" alt="Orange and gold cord lace" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+        <img src="images/th-03.webp" fetchpriority="high" decoding="async" alt="Rack of narrow lace trims in many colours" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+        <img src="images/th-02.webp" fetchpriority="auto" decoding="async" alt="Lace rolls in orange, lilac and magenta" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
+        <img src="images/th-07.webp" fetchpriority="auto" decoding="async" alt="Orange and gold cord lace" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 999px 999px 2px 2px;">
       </div>
     </div>
   </section>
@@ -178,7 +187,7 @@ a:hover { opacity: .8; }
 
     <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 32px;">
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
-        <span style="font-size: 14px; color: var(--muted);">Showing 8 of [n] laces &amp; trims</span>
+        <span style="font-size: 14px; color: var(--muted);">Showing 8 laces &amp; trims · many more in store</span>
         <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .08em;">Sort
           <select style="min-height: 44px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 14px;">
             <option>New arrivals</option><option>Price per metre, low to high</option><option>Widest first</option>
@@ -189,7 +198,7 @@ a:hover { opacity: .8; }
         
           <a href="product.html" style="display: flex; flex-direction: column; gap: 14px;">
             <div style="position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden;">
-              <img src="images/th-05.webp" loading="lazy" decoding="async" alt="Guipure Lace Border" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              <img src="images/th-05.webp" fetchpriority="auto" decoding="async" alt="Guipure Lace Border" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
               
                 <span style="position: absolute; top: 14px; left: 14px; background: var(--bg); color: var(--ink); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 6px 10px;">New</span>
               
@@ -343,12 +352,12 @@ a:hover { opacity: .8; }
             <span style="font-family: 'Cormorant Garamond', serif; font-size: 32px; line-height: 1.05;">Can’t find your shade?</span>
             <span style="font-size: 14px; line-height: 1.65; font-weight: 300; color: var(--onDeepMuted);">Most of the wall is not online yet. Send a photo of your fabric and we will reply with matching laces.</span>
           </div>
-          <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--onDeep); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;">Match on WhatsApp</a>
+          <a href="https://wa.me/971558285595?text=Hello%20Thread%20House%2C%20I%20would%20like%20to%20match%20a%20lace%20to%20my%20fabric.%20I%20will%20send%20a%20photo." target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--onDeep); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;">Match on WhatsApp</a>
         </div>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 32px;">
         <div style="width: 220px; height: 2px; background: var(--line);"><div style="width: 30%; height: 2px; background: var(--ink);"></div></div>
-        <span style="font-size: 13px; color: var(--muted);">You’ve seen 8 of [n]</span>
+        <span style="font-size: 13px; color: var(--muted);">Many more laces in the shop</span>
         <button style="min-height: 52px; padding: 0 36px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; cursor: pointer;">Load more</button>
       </div>
     </div>
@@ -358,7 +367,7 @@ a:hover { opacity: .8; }
     <div class="wrap" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; padding-top: 64px; padding-bottom: 64px;">
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">How much do I need?</span>
-        <span style="font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Measure the edge you are trimming and add 10 cm for turning the ends. Two abaya sleeves usually take about [n] metres.</span>
+        <span style="font-size: 14.5px; line-height: 1.65; font-weight: 300; color: var(--muted);">Measure the edge you are trimming and add 10 cm for turning the ends.</span>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <span style="font-family: 'Cormorant Garamond', serif; font-size: 26px;">We can stitch it on</span>
@@ -374,10 +383,29 @@ a:hover { opacity: .8; }
   <footer style="background: var(--deep); color: var(--onDeepMuted);">
     <div class="wrap" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 32px; padding-bottom: 32px; font-size: 12px; letter-spacing: .06em;">
       <span style="color: var(--onDeep); font-family: var(--wmFont); font-weight: var(--wmWeight); font-size: calc(20px * var(--wmScale)); letter-spacing: var(--wmTrack); text-transform: var(--wmCase); line-height: 1.1;">Thread House</span>
-      <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE · Prices in AED</span>
+      <span>© 2026 Thread House Trading &amp; Tailoring · Sharjah, UAE · Prices in AED · <a href="https://www.instagram.com/threadhousetrading/" target="_blank" rel="noopener" style="text-decoration: underline; text-underline-offset: 3px;">Instagram</a> · <a href="https://www.tiktok.com/@thread_house_trading" target="_blank" rel="noopener" style="text-decoration: underline; text-underline-offset: 3px;">TikTok</a></span>
     </div>
   </footer>
 </div>
+<a class="wa-fab" href="https://wa.me/971558285595?text=Hello%20Thread%20House%2C%20I%20have%20a%20question." target="_blank" rel="noopener" aria-label="Chat with Thread House on WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
+<script>(function () {
+  var NUMBER = '971558285595';
+  function open(text) { window.open('https://wa.me/' + NUMBER + '?text=' + encodeURIComponent(text), '_blank', 'noopener'); }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-wa-text], [data-wa-form]');
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    if (b.hasAttribute('data-wa-text')) { open(b.getAttribute('data-wa-text')); return; }
+    var form = b.closest('form'), lines = [b.getAttribute('data-wa-form')];
+    if (form) form.querySelectorAll('label').forEach(function (l) {
+      var f = l.querySelector('input, select, textarea');
+      if (!f || !String(f.value).trim()) return;
+      var name = (l.childNodes[0] && l.childNodes[0].textContent || '').trim();
+      lines.push(name + ': ' + f.value.trim());
+    });
+    open(lines.join('\n'));
+  }, true);
+})();</script>
 <script>
   // Mockup buttons and forms do nothing yet; keep empty "#" links from jumping to the top.
   document.addEventListener('click', function (e) {
